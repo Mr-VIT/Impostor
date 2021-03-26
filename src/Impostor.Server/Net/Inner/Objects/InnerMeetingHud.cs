@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Impostor.Api;
 using Impostor.Api.Events.Managers;
+using Impostor.Api.Events.Player;
 using Impostor.Api.Innersloth;
 using Impostor.Api.Net;
 using Impostor.Api.Net.Messages;
@@ -73,6 +74,37 @@ namespace Impostor.Server.Net.Inner.Objects
                     if ((num & 1 << i) != 0)
                     {
                         _playerStates[i].Deserialize(reader);
+                        var playerState = _playerStates[i];
+
+                        if (playerState.DidVote && !playerState.IsDead)
+                        {
+                            var player = _game.GameNet.GameData?.GetPlayerById(playerState.TargetPlayerId);
+                            if (player != null)
+                            {
+                                var clientPlayer = _game.GetClientPlayer(player.Controller!.OwnerId);
+
+                                VoteType voteType;
+                                InnerPlayerControl? votedForPlayer = null;
+
+                                switch ((VoteType)playerState.VotedFor)
+                                {
+                                    case VoteType.Skip:
+                                        voteType = VoteType.Skip;
+                                        break;
+
+                                    case VoteType.None:
+                                        voteType = VoteType.None;
+                                        break;
+
+                                    default:
+                                        voteType = VoteType.Player;
+                                        votedForPlayer = _game.GameNet.GameData?.GetPlayerById((byte)playerState.VotedFor)?.Controller;
+                                        break;
+                                }
+
+                                await _eventManager.CallAsync(new PlayerVotedEvent(_game, clientPlayer!, player.Controller, voteType, votedForPlayer));
+                            }
+                        }
                     }
                 }
             }
@@ -135,6 +167,7 @@ namespace Impostor.Server.Net.Inner.Objects
         private void PopulateButtons(byte reporter)
         {
             _playerStates = _gameNet.GameData!.Players
+                .OrderBy(x => x.Value.Controller!.NetId)
                 .Select(x =>
                 {
                     var area = new PlayerVoteArea(this, x.Key);
