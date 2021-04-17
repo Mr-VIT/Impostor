@@ -166,7 +166,7 @@ namespace Impostor.Tools.ServerReplay
                     // Create and register connection.
                     var connection = new MockHazelConnection(address);
 
-                    await _clientManager.RegisterConnectionAsync(connection, name, gameVersion, null);
+                    await _clientManager.RegisterConnectionAsync(connection, name, gameVersion);
 
                     // Store reference for ourselfs.
                     Connections.Add(clientId, connection);
@@ -209,7 +209,7 @@ namespace Impostor.Tools.ServerReplay
                 case RecordedPacketType.GameCreated:
                     _gameCodeFactory.Result = GameCode.From(reader.ReadString());
 
-                    await _gameManager.CreateAsync(GameOptions[clientId]);
+                    await _gameManager.CreateAsync(Connections[clientId].Client, GameOptions[clientId]);
 
                     GameOptions.Remove(clientId);
                     break;
