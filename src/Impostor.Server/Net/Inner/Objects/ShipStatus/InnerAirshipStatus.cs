@@ -53,7 +53,7 @@ namespace Impostor.Server.Net.Inner.Objects.ShipStatus
             systems.Add(SystemTypes.Reactor, new HeliSabotageSystemType());
             systems.Add(SystemTypes.Decontamination, new ElectricalDoors(Doors));
             systems.Add(SystemTypes.Decontamination2, new AutoDoorsSystemType(Doors));
-            systems.Add(SystemTypes.Security, new SecurityCameraSystemType());
+            systems.Add(SystemTypes.Security, new SecurityCameraSystemType(Game));
         }
     }
 }

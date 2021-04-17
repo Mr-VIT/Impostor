@@ -308,6 +308,12 @@ namespace Impostor.Server.Net.Inner.Objects
             PlayerInfo.LastDeathReason = reason;
         }
 
+        internal async ValueTask SetActivity(ActivityType activity)
+        {
+            await _eventManager.CallAsync(new PlayerActivityHasChangedEvent(Game, Game.GetClientPlayer(OwnerId), this, PlayerInfo.Activity, activity));
+            PlayerInfo.Activity = activity;
+        }
+
         private async ValueTask HandleCompleteTask(ClientPlayer sender, uint taskId)
         {
             var task = PlayerInfo.Tasks.ElementAtOrDefault((int)taskId);
@@ -597,12 +603,6 @@ namespace Impostor.Server.Net.Inner.Objects
             }
 
             return true;
-        }
-
-        internal async ValueTask SetActivity(ActivityType activity)
-        {
-            await _eventManager.CallAsync(new PlayerActivityHasChangedEvent(_game, _game.GetClientPlayer(OwnerId), this, PlayerInfo.Activity, activity));
-            PlayerInfo.Activity = activity;
         }
     }
 }

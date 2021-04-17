@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using Impostor.Server.Net.State;
 using Impostor.Api.Net.Messages;
+using Impostor.Server.Net.State;
 
 namespace Impostor.Server.Net.Inner.Objects.Systems.ShipStatus
 {
     internal class SecurityCameraSystemType : ISystemType
     {
         private readonly Game _game;
-        public HashSet<byte> PlayersUsingNow { get; internal set; } = new ();
-        public HashSet<byte> PlayersStartedWatching { get; internal set; } = new ();
-        public HashSet<byte> PlayersStoppedWatching { get; internal set; } = new ();
 
         public SecurityCameraSystemType(Game game)
         {
             _game = game;
         }
+
+        public HashSet<byte> PlayersUsingNow { get; internal set; } = new();
+
+        public HashSet<byte> PlayersStartedWatching { get; internal set; } = new();
+
+        public HashSet<byte> PlayersStoppedWatching { get; internal set; } = new();
 
         public void Serialize(IMessageWriter writer, bool initialState)
         {
@@ -43,7 +46,7 @@ namespace Impostor.Server.Net.Inner.Objects.Systems.ShipStatus
 
             foreach (var id in startedWatching)
             {
-                if(_game.GameNet.GameData.GetPlayerById(id) is InnerPlayerInfo player)
+                if (_game.GameNet.GameData.GetPlayerById(id) is InnerPlayerInfo player)
                 {
                     player.Controller.SetActivity(Api.Innersloth.ActivityType.WatchingCamera);
                 }
@@ -51,7 +54,7 @@ namespace Impostor.Server.Net.Inner.Objects.Systems.ShipStatus
 
             foreach (var id in stoppedWatching)
             {
-                if(_game.GameNet.GameData.GetPlayerById(id) is InnerPlayerInfo player)
+                if (_game.GameNet.GameData.GetPlayerById(id) is InnerPlayerInfo player)
                 {
                     player.Controller.SetActivity(Api.Innersloth.ActivityType.Default);
                 }

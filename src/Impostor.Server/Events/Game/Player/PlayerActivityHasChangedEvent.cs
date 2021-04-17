@@ -1,7 +1,7 @@
 using Impostor.Api.Events.Player;
 using Impostor.Api.Games;
-using Impostor.Api.Net;
 using Impostor.Api.Innersloth;
+using Impostor.Api.Net;
 using Impostor.Api.Net.Inner.Objects;
 
 namespace Impostor.Server.Events.Player
@@ -24,6 +24,7 @@ namespace Impostor.Server.Events.Player
         public IInnerPlayerControl PlayerControl { get; }
 
         public ActivityType PreviousActivity { get; }
+
         public ActivityType CurrentActivity { get; }
     }
 }
